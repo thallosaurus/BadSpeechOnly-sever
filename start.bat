@@ -13,7 +13,7 @@ echo Downloading files from GitHub...
 git pull https://github.com/thallosaurus/BadSpeechOnly-sever.git
 echo %Build%
 echo Starting node.js...
-start node app.js
+node app.js
 if ERRORLEVEL 1 (
 	echo "Can't start node.js, is node.js installed?"
 	pause
