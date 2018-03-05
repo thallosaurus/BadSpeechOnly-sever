@@ -1,12 +1,21 @@
 "use strict"
+//You can't use classes in "normal mode"... -.-
+
 const app = require("express")();
 const http = require("http").Server(app);
-const os = require("os");
 
 process.on("SIGINT", function() {
 	console.log("Shutdown BSOServer...");
 	process.exit();
 });
+
+var mode;
+
+var Debug = function(msg) {
+	if (mode == "debug") {
+		console.log("[DEBUG] " + msg.toString());
+	}
+}
 
 class _BSOPlayer {
 	constructor(data) {
@@ -25,9 +34,15 @@ class _BSOPlayer {
 }
 
 class _BSOServer {
-	constructor(port) {
+	constructor(port, modex) {
 		this.port = port;
 		this.running = false;
+		if (!(modex == "production") || modex == null) {
+			//Switch developer mode
+			mode = "debug";
+		} else {
+			mode = "production";
+		}
 	}
 	
 	start() {
@@ -38,9 +53,9 @@ class _BSOServer {
 	_BSOInit() {
 		this.io = require("socket.io")(http);
 		console.log("Server is running at port "+this.port);
+		Debug("Running in Mode " + mode);
 		this.running = true;
 
-		//var slots = new Array();
 		var slots = {};
 		var clients = new Array();
 
@@ -52,7 +67,6 @@ class _BSOServer {
 			res.sendFile(__dirname+"\\dist\\"+req.params.files);
 		});
 		
-		//So, we connected to our server
 		this.io.on("connection", function(socket) {
 			var id = socket.conn.id;
 			
@@ -67,6 +81,7 @@ class _BSOServer {
 					socket.broadcast.emit("broadcast", {clients, slots});
 					socket.emit("broadcast", {clients, slots});
 					console.log("created new player");
+					Debug(slots);
 				}
 			});
 			
@@ -78,6 +93,7 @@ class _BSOServer {
 					socket.broadcast.emit("broadcast", {clients, slots});
 					//...and to the sender.
 					socket.emit("broadcast", {clients, slots});
+					Debug(slots);
 				}
 			});
 
@@ -99,6 +115,5 @@ class _BSOServer {
 	}
 }
 
-var Server = new _BSOServer((process.argv[2] || 666));
-//app.listen(pro);
+var Server = new _BSOServer((process.argv[2] || 666), process.argv[3]);
 Server.start();
