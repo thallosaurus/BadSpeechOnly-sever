@@ -1,6 +1,7 @@
 "use strict"
 const app = require("express")();
 const http = require("http").Server(app);
+const os = require("os");
 
 process.on("SIGINT", function() {
 	console.log("Shutdown BSOServer...");
@@ -36,7 +37,7 @@ class _BSOServer {
 	
 	_BSOInit() {
 		this.io = require("socket.io")(http);
-		console.log("Server is running at localhost:"+this.port);
+		console.log("Server is running at port "+this.port);
 		this.running = true;
 
 		//var slots = new Array();
