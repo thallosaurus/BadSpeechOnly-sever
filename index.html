@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io();
+
+console.log(socket);
+
+class ConnectionUtilities {
+	generateKey() {
+		var text = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		for (var i = 0; i < 5; i++) {
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+		return text;
+	}
+}
+
+class Update {
+	constructor(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+function addPlayer() {
+	socket.emit("player_create", new Update(100,100,100, ));
+}
+
+function updateCoords() {
+	socket.emit("update", new Update(250,250,250));
+}
+
+socket.on("message", function(data) {
+	console.log(data);
+});
+</script>
+</head>
+
+<body>
+<button onclick="addPlayer()">Add Player</button>
+<button onclick="updateCoords()">Update Position</button>
+</body>
+</html>
