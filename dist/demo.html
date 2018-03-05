@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+* {
+	margin: 0px;
+	padding: 0px;
+}
+</style>
+<script>
+var canvas, ctx;
+
+class Update {
+	constructor(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+function sendData(data) {
+	socket.emit("update", new Update(data.clientX, data.clientY, 0));
+}
+
+function canvasUpdate(data) {
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = "black";
+	for (i = 0; i < data.clients.length; i++) {
+		if (!(data.clients[i] == null)) {
+			ctx.fillRect(data.slots[data.clients[i]].coordinates.x, data.slots[data.clients[i]].coordinates.y, 10, 10);
+		}
+	}
+	//ctx.fillRect(data.slots.coordinates.x, data.coordinates.y, 10, 10);
+	canvas.onmousemove = function (e) {
+		sendData(e);
+	}
+}
+var socket = io();
+var defaultPosition = new Update(100, 100, 0);
+
+window.onload = function () {
+	canvas = document.getElementById("canvas");
+	ctx = canvas.getContext("2d");
+	socket.emit("player_create", defaultPosition);
+}
+
+socket.on("broadcast", function(data) {
+	canvasUpdate(data);
+});
+</script>
+</head>
+
+<body>
+<canvas width="1000px" height="1000px" id="canvas"></canvas>
+</body>
+</html>
