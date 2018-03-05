@@ -2,9 +2,13 @@
 const app = require("express")();
 const http = require("http").Server(app);
 
+process.on("SIGINT", function() {
+	console.log("Shutdown BSOServer...");
+	process.exit();
+});
+
 class _BSOPlayer {
 	constructor(data) {
-		//this.coordinates = new Array({"x":data.x,"y":data.y,"z":data.z});
 		this.coordinates = data;
 	}
 	
@@ -94,6 +98,6 @@ class _BSOServer {
 	}
 }
 
-var Server = new _BSOServer(process.argv[2]);
+var Server = new _BSOServer((process.argv[2] || 666));
 //app.listen(pro);
 Server.start();
