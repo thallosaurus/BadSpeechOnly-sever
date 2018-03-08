@@ -46,10 +46,6 @@ window.onload = function () {
 	socket.emit("player_create", JSON.stringify(defaultPosition));
 }
 
-canvas.onmouseclick = function (e) {
-	socket.emit("fire");
-}
-
 socket.on("broadcast", function(data) {
 	canvasUpdate(data);
 });

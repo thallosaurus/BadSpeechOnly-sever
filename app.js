@@ -5,7 +5,7 @@ const app = require("express")();
 const http = require("http").Server(app);
 
 process.on("SIGINT", function() {
-	console.log("Shutting BSOServer down...");
+	console.log("Shutdown BSOServer...");
 	process.exit();
 });
 
@@ -94,12 +94,8 @@ class _BSOServer {
 					//broadcast to all clients except sender...
 					socket.broadcast.emit("broadcast", JSON.stringify({clients, slots}));
 					//...and to the sender.
-<<<<<<< HEAD
 					socket.emit("broadcast", JSON.stringify({clients, slots}));
 					Debug(slots);
-=======
-					socket.emit("broadcast", {clients, slots});
->>>>>>> d6fe007286f413c30e4b4c6b0aa8bb42f74115eb
 				}
 			});
 
@@ -116,11 +112,6 @@ class _BSOServer {
 				delete clients[clients.indexOf(id)];
 				socket.broadcast.emit("broadcast", JSON.stringify({clients, slots}));
 				console.log(id + " disconnected");
-			});
-
-			socket.on("fire", function() {
-				//handle fire events
-				Debug(id + " fired!");
 			});
 		});
 	}
