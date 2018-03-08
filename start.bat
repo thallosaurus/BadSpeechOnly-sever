@@ -15,6 +15,6 @@ echo %Build%
 echo Starting node.js...
 node app.js 666 production
 if ERRORLEVEL 1 (
-	echo "Can't start node.js, is node.js installed?"
+	echo Can't start node.js, is node.js installed?
 	pause
 	exit)
