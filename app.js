@@ -73,26 +73,28 @@ class _BSOServer {
 			//Then, after we requested the identity, we can set up the answer event:
 			console.log("Client connected, id: " + socket.conn.id);
 			
-			socket.on("player_create", function(data) {
+			socket.on("player_create", function(jsonData) {
+				var data = JSON.parse(jsonData);
 				var p = new _BSOPlayer(data);
 				if (slots[id] == null) {
 					slots[id] = p;
 					clients.push(id);
-					socket.broadcast.emit("broadcast", {clients, slots});
-					socket.emit("broadcast", {clients, slots});
+					socket.broadcast.emit("broadcast", JSON.stringify({clients, slots}));
+					socket.emit("broadcast", JSON.stringify({clients, slots}));
 					console.log("created new player");
 					Debug(slots);
 				}
 			});
 			
-			socket.on("update", function (updateData) {
+			socket.on("update", function (jsonData) {
+				var updateData = JSON.parse(jsonData);
 				if (!(slots[id] == null)) {
 					slots[socket.conn.id].coordinates = updateData;
 
 					//broadcast to all clients except sender...
-					socket.broadcast.emit("broadcast", {clients, slots});
+					socket.broadcast.emit("broadcast", JSON.stringify({clients, slots}));
 					//...and to the sender.
-					socket.emit("broadcast", {clients, slots});
+					socket.emit("broadcast", JSON.stringify({clients, slots}));
 					Debug(slots);
 				}
 			});
@@ -101,14 +103,14 @@ class _BSOServer {
 			socket.on("pullSlots", function() {
 				if (!(slots[id] == null)) {
 					console.log("Sent player slots to " + id);
-					socket.emit("pushSlots", {clients, slots});
+					socket.emit("pushSlots", JSON.stringify({clients, slots}));
 				}
 			});
 
 			socket.on("disconnect", function() {
 				delete slots[id];
 				delete clients[clients.indexOf(id)];
-				socket.broadcast.emit("broadcast", {clients, slots});
+				socket.broadcast.emit("broadcast", JSON.stringify({clients, slots}));
 				console.log(id + " disconnected");
 			});
 		});

@@ -19,13 +19,14 @@ class Update {
 }
 
 function sendData(data) {
-	socket.emit("update", new Update(data.clientX, data.clientY, 0));
+	socket.emit("update", JSON.stringify(new Update(data.clientX, data.clientY, 0)));
 }
 
-function canvasUpdate(data) {
+function canvasUpdate(o) {
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "black";
+	var data = JSON.parse(o);
 	for (i = 0; i < data.clients.length; i++) {
 		if (!(data.clients[i] == null)) {
 			ctx.fillRect(data.slots[data.clients[i]].coordinates.x, data.slots[data.clients[i]].coordinates.y, 10, 10);
@@ -42,7 +43,7 @@ var defaultPosition = new Update(100, 100, 0);
 window.onload = function () {
 	canvas = document.getElementById("canvas");
 	ctx = canvas.getContext("2d");
-	socket.emit("player_create", defaultPosition);
+	socket.emit("player_create", JSON.stringify(defaultPosition));
 }
 
 socket.on("broadcast", function(data) {
